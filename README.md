@@ -4,7 +4,7 @@ This local tool creates configuration for multiple AI agent profiles. It can sha
 
 ## Installation by environment
 
-Replace `YOUR_USERNAME` with the GitHub account that owns the repository.
+Repository: https://github.com/kurixutian/ai-account-manager
 
 ### Debian, Ubuntu, and WSL
 
@@ -14,7 +14,7 @@ For a global `ai-manager` command, use `pipx`:
 sudo apt update
 sudo apt install pipx
 pipx ensurepath
-pipx install git+https://github.com/YOUR_USERNAME/ai-account-manager.git
+pipx install git+https://github.com/kurixutian/ai-account-manager.git
 ```
 
 Open a new terminal after `pipx ensurepath`, then run:
@@ -31,7 +31,7 @@ If `pipx` is unavailable, use the virtual-environment method below.
 sudo dnf install python3-pip python3-virtualenv
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install git+https://github.com/YOUR_USERNAME/ai-account-manager.git
+python -m pip install git+https://github.com/kurixutian/ai-account-manager.git
 ai-manager setup
 ```
 
@@ -41,7 +41,7 @@ ai-manager setup
 sudo pacman -S python python-pip
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install git+https://github.com/YOUR_USERNAME/ai-account-manager.git
+python -m pip install git+https://github.com/kurixutian/ai-account-manager.git
 ai-manager setup
 ```
 
@@ -50,7 +50,7 @@ ai-manager setup
 ```bash
 brew install python pipx
 pipx ensurepath
-pipx install git+https://github.com/YOUR_USERNAME/ai-account-manager.git
+pipx install git+https://github.com/kurixutian/ai-account-manager.git
 ```
 
 Open a new terminal, then run:
@@ -64,7 +64,7 @@ ai-manager setup
 ```powershell
 py -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install git+https://github.com/YOUR_USERNAME/ai-account-manager.git
+python -m pip install git+https://github.com/kurixutian/ai-account-manager.git
 ai-manager setup
 ```
 
