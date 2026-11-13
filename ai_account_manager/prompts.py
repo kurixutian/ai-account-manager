@@ -13,7 +13,7 @@ def move_selection(index: int, direction: str, size: int) -> int:
 
 
 def _numbered_prompt(prompt: str, options: list[str], input_stream, output_stream) -> str:
-    output_stream.write(prompt + "\n")
+    output_stream.write(render_menu(prompt, options, 0) + "\n")
     for number, option in enumerate(options, 1):
         output_stream.write(f"  {number}) {option}\n")
     output_stream.flush()
@@ -24,7 +24,15 @@ def _numbered_prompt(prompt: str, options: list[str], input_stream, output_strea
         raise ValueError("invalid menu selection") from exc
 
 
-def select_option(prompt: str, options: list[str], input_stream=sys.stdin, output_stream=sys.stdout) -> str:
+def render_menu(prompt: str, options: list[str], selected: int, step: int | None = None, total: int | None = None) -> str:
+    heading = f"Step {step} of {total} — {prompt}" if step and total else prompt
+    rows = ["", heading, ""]
+    rows.extend(f"  {'>' if position == selected else ' '} {option}" for position, option in enumerate(options))
+    rows.extend(["", "  ↑ ↓ Navigate   Enter Select   Q Quit", ""])
+    return "\n".join(rows)
+
+
+def select_option(prompt: str, options: list[str], input_stream=sys.stdin, output_stream=sys.stdout, step: int | None = None, total: int | None = None) -> str:
     if not options:
         raise ValueError("options cannot be empty")
     if not input_stream.isatty() or not output_stream.isatty():
@@ -53,11 +61,9 @@ def select_option(prompt: str, options: list[str], input_stream=sys.stdin, outpu
                 termios.tcsetattr(input_stream.fileno(), termios.TCSADRAIN, old_settings)
 
     index = 0
-    output_stream.write(prompt + "\n")
+    output_stream.write(render_menu(prompt, options, 0, step, total) + "\n")
     while True:
-        output_stream.write("\033[2K\r  " + "  ".join(
-            f"[{option}]" if position == index else option for position, option in enumerate(options)
-        ))
+        output_stream.write("\033[2J\033[H" + render_menu(prompt, options, index, step, total))
         output_stream.flush()
         key = read_key()
         if key == "enter":

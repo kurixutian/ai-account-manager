@@ -23,7 +23,7 @@ Open a new terminal after `pipx ensurepath`, then run:
 ai-manager setup
 ```
 
-Interactive setup uses arrow-key menus for provider type, future account additions, and skill sharing. Press Up/Down to move and Enter to select. Non-interactive terminals receive a numbered-menu fallback, and command-line flags remain available for automation.
+Interactive setup is a guided five-step wizard: provider, profile count, profile-name prefix, future additions, and skill sharing. It previews the generated profile names and asks for confirmation before writing. Arrow-key menus show one option per line with `↑ ↓ Navigate`, `Enter Select`, and `Q Quit`; non-interactive terminals receive a numbered-menu fallback. Command-line flags remain available for automation.
 
 If `pipx` is unavailable, use the virtual-environment method below.
 

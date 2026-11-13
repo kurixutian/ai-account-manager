@@ -44,32 +44,50 @@ def parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = parser().parse_args(argv)
     if args.action == "setup":
+        interactive = any(value is None for value in (args.provider, args.count, args.base_name, args.future_additions, args.policy))
         if not args.provider:
-            args.provider = select_option("AI agent type:", ["codex", "agy", "other"])
+            args.provider = select_option("Choose AI provider", ["codex", "agy", "other"], step=1, total=5)
             if args.provider == "other":
                 args.provider = input("Custom agent type: ").strip()
         if not args.count:
-            args.count = int(input("How many accounts? "))
+            while True:
+                try:
+                    args.count = int(input("Step 2 of 5 — How many profiles? ").strip())
+                    if args.count > 0:
+                        break
+                except ValueError:
+                    pass
+                print("Enter a positive whole number.")
         if args.count < 1:
             raise ValueError("count must be positive")
         base = args.base_name
         if not base:
-            base = input(f"Base account name [{args.provider.lower()}]: ").strip() or args.provider.lower()
+            base = input(f"Step 3 of 5 — Profile name prefix [{args.provider.lower()}]: ").strip() or args.provider.lower()
         config = default_config(args.provider)
         future = args.future_additions
         if future is None:
-            future = select_option("Will you add more accounts later?", ["yes", "no"])
+            future = select_option("Will you add more profiles later?", ["yes", "no"], step=4, total=5)
         config["future_additions"] = future in {"y", "yes"}
         for index in range(args.count):
             add_account(config, base if index == 0 else f"{base}{index + 1}")
         policy = args.policy
         if policy is None:
-            policy = select_option("Skill sharing:", ["all", "selected", "separate"])
+            policy = select_option("How should skills be shared?", ["all", "selected", "separate"], step=5, total=5)
         skills_path = args.skills_path
         skills = args.skills
         if policy == "selected" and not skills:
-            skills = [item for item in input("Shared skill names (comma-separated): ").split(",") if item.strip()]
+            skills = [item for item in input("Selected skill names (comma-separated): ").split(",") if item.strip()]
         set_skill_policy(config, policy, skills_path, skills)
+        if interactive:
+            print("\nConfiguration preview")
+            print(f"  Provider: {config['provider']}")
+            print(f"  Profiles: {', '.join(account['name'] for account in config['accounts'])}")
+            print(f"  Add more later: {'yes' if config['future_additions'] else 'no'}")
+            print(f"  Skill sharing: {policy}")
+            confirmation = select_option("Create this configuration?", ["create", "cancel"])
+            if confirmation == "cancel":
+                print("Cancelled; no files were changed.")
+                return 0
         if args.dry_run:
             print("dry-run: would write " + str(Path(args.output)))
         else:
