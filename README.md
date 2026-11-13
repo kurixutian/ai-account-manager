@@ -31,6 +31,15 @@ ai-manager
 
 This opens the vertical main menu with options to create, add, view, delete, check quota, manage skills, or exit. `ai-manager setup` remains available as a direct shortcut.
 
+If `ai-manager` still says an action is required, refresh the old cached installation:
+
+```bash
+pipx uninstall ai-manager
+pipx install --pip-args='--no-cache-dir' git+https://github.com/kurixutian/ai-account-manager.git
+hash -r
+ai-manager
+```
+
 Interactive setup is a guided five-step wizard: provider, profile count, profile-name prefix, future additions, and skill sharing. It previews the generated profile names and asks for confirmation before writing. Arrow-key menus show one option per line with `↑ ↓ Navigate`, `Enter Select`, and `Q Quit`; non-interactive terminals receive a numbered-menu fallback. Command-line flags remain available for automation.
 
 If `pipx` is unavailable, use the virtual-environment method below.
