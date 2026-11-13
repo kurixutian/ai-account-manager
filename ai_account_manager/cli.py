@@ -12,7 +12,7 @@ from .skill_manager import set_skill_policy
 
 def parser() -> argparse.ArgumentParser:
     command = argparse.ArgumentParser(prog="ai-manager")
-    sub = command.add_subparsers(dest="action", required=True)
+    sub = command.add_subparsers(dest="action", required=False)
     setup = sub.add_parser("setup")
     setup.add_argument("--provider")
     setup.add_argument("--count", type=int)
@@ -41,8 +41,34 @@ def parser() -> argparse.ArgumentParser:
     return command
 
 
+def main_menu() -> int:
+    print("\nAI Manager")
+    print("Manage profiles, quotas, skills, and failover.\n")
+    choice = select_option("What would you like to do?", ["create", "add", "view", "delete", "quota", "skills", "exit"])
+    if choice == "exit":
+        print("Goodbye.")
+        return 0
+    if choice == "create":
+        return main(["setup"])
+    if choice == "view":
+        return main(["list"])
+    if choice == "quota":
+        return main(["quota"])
+    if choice == "add":
+        return main(["add", input("Profile name: ").strip()])
+    if choice == "delete":
+        return main(["remove", input("Profile name to delete: ").strip()])
+    policy = select_option("Skill sharing mode:", ["all", "selected", "separate"])
+    skills = []
+    if policy == "selected":
+        skills = [item.strip() for item in input("Skill names (comma-separated): ").split(",") if item.strip()]
+    return main(["policy", policy, "--skills", *skills])
+
+
 def main(argv: list[str] | None = None) -> int:
     args = parser().parse_args(argv)
+    if args.action is None:
+        return main_menu()
     if args.action == "setup":
         interactive = any(value is None for value in (args.provider, args.count, args.base_name, args.future_additions, args.policy))
         if not args.provider:

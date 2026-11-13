@@ -3,6 +3,7 @@ import tempfile
 import unittest
 from contextlib import redirect_stdout
 from pathlib import Path
+from unittest.mock import patch
 
 from ai_account_manager.account_manager import add_account, choose_available_account, launch_account
 from ai_account_manager.cli import main
@@ -49,6 +50,12 @@ class SkillsQuotaCliTests(unittest.TestCase):
         calls = []
         launch_account(account, runner=lambda command: calls.append(command))
         self.assertEqual(calls, [["agent-cli", "--profile", "first"]])
+
+    def test_plain_command_opens_main_menu(self):
+        with patch("ai_account_manager.cli.select_option", return_value="exit"), redirect_stdout(io.StringIO()) as output:
+            result = main([])
+        self.assertEqual(result, 0)
+        self.assertIn("AI Manager", output.getvalue())
 
 
 if __name__ == "__main__":
