@@ -6,6 +6,7 @@ from pathlib import Path
 from .account_manager import add_account, choose_available_account, launch_account, remove_account
 from .config_manager import default_config, load_config, save_config, validate_config
 from .quota_manager import refresh_quotas
+from .prompts import select_option
 from .skill_manager import set_skill_policy
 
 
@@ -44,7 +45,9 @@ def main(argv: list[str] | None = None) -> int:
     args = parser().parse_args(argv)
     if args.action == "setup":
         if not args.provider:
-            args.provider = input("AI agent type: ").strip()
+            args.provider = select_option("AI agent type:", ["codex", "agy", "other"])
+            if args.provider == "other":
+                args.provider = input("Custom agent type: ").strip()
         if not args.count:
             args.count = int(input("How many accounts? "))
         if args.count < 1:
@@ -55,13 +58,13 @@ def main(argv: list[str] | None = None) -> int:
         config = default_config(args.provider)
         future = args.future_additions
         if future is None:
-            future = input("Will you add more accounts later? [Y/n]: ").strip().lower() or "yes"
+            future = select_option("Will you add more accounts later?", ["yes", "no"])
         config["future_additions"] = future in {"y", "yes"}
         for index in range(args.count):
             add_account(config, base if index == 0 else f"{base}{index + 1}")
         policy = args.policy
         if policy is None:
-            policy = input("Skill sharing (all/selected/separate) [separate]: ").strip().lower() or "separate"
+            policy = select_option("Skill sharing:", ["all", "selected", "separate"])
         skills_path = args.skills_path
         skills = args.skills
         if policy == "selected" and not skills:

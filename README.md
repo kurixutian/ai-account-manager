@@ -23,6 +23,8 @@ Open a new terminal after `pipx ensurepath`, then run:
 ai-manager setup
 ```
 
+Interactive setup uses arrow-key menus for provider type, future account additions, and skill sharing. Press Up/Down to move and Enter to select. Non-interactive terminals receive a numbered-menu fallback, and command-line flags remain available for automation.
+
 If `pipx` is unavailable, use the virtual-environment method below.
 
 ### Fedora
